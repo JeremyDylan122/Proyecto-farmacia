@@ -1,0 +1,45 @@
+package com.msclientebeneficio.demo.Controller;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.msclientebeneficio.demo.Dto.ClienteDTO;
+import com.msclientebeneficio.demo.Service.ClienteService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/api/clientes")
+@RequiredArgsConstructor
+public class ClienteController {
+
+    private final ClienteService clienteService;
+
+    @GetMapping("/{run}")
+    public ResponseEntity<ClienteDTO> obtenerClientePorRun(@PathVariable String run) {
+        return ResponseEntity.ok(clienteService.obtenerClientePorRun(run));
+    }
+
+    @PostMapping()
+    public ResponseEntity<ClienteDTO> crearCliente(ClienteDTO clienteDTO) {
+        return ResponseEntity.created(null).build();
+    }
+
+    @PutMapping("/{run}")
+    public ResponseEntity<ClienteDTO> actualizarCliente(@PathVariable String run, ClienteDTO clienteDTO) {
+        return ResponseEntity.ok(clienteService.actualizarCliente(run, clienteDTO));
+    }
+
+    @DeleteMapping("/{run}/{dv}")
+    public ResponseEntity<Boolean> eliminarCliente(@PathVariable String run, @PathVariable String dv) {
+        clienteService.eliminarCliente(run, dv);
+        return ResponseEntity.noContent().build();
+    }
+
+}
