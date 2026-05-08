@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.msclientebeneficio.demo.Model.Cliente;
 
 @Repository
-public interface ClienteRepository  extends JpaRepository<Cliente, Long>{
+public interface ClienteRepository  extends JpaRepository<Cliente, String>{
 
     Cliente findByRun(String run);
 

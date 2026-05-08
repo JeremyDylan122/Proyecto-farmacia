@@ -6,12 +6,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.msclientebeneficio.demo.Dto.ClienteDTO;
 import com.msclientebeneficio.demo.Service.ClienteService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,12 +29,13 @@ public class ClienteController {
     }
 
     @PostMapping()
-    public ResponseEntity<ClienteDTO> crearCliente(ClienteDTO clienteDTO) {
-        return ResponseEntity.created(null).build();
+    public ResponseEntity<ClienteDTO> crearCliente(@Valid @RequestBody ClienteDTO clienteDTO) {
+        ClienteDTO clienteCreado = clienteService.crearCliente(clienteDTO);
+        return ResponseEntity.created(null).body(clienteCreado);
     }
 
     @PutMapping("/{run}")
-    public ResponseEntity<ClienteDTO> actualizarCliente(@PathVariable String run, ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> actualizarCliente(@Valid @RequestBody ClienteDTO clienteDTO, @PathVariable String run) {
         return ResponseEntity.ok(clienteService.actualizarCliente(run, clienteDTO));
     }
 

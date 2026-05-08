@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS cliente_beneficio_bd.cliente (
     nombre VARCHAR(80) NOT NULL,
     apellido VARCHAR(80) NOT NULL,
     correo VARCHAR(80) NOT NULL,
-    telefono VARCHAR(9),
+    telefono VARCHAR(9)NOT NULL,
     id_beneficio BIGINT,
     CONSTRAINT fk_cliente_beneficio
         FOREIGN KEY (id_beneficio)

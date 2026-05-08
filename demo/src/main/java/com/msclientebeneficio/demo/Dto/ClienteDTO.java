@@ -23,11 +23,11 @@ public class ClienteDTO {
     private String dv;
     @NotNull(message = "El nombre no puede ser nulo.")
     @NotBlank(message = "El nombre no puede estar vacío.")
-    @Size(max = 50, message = "El nombre no puede tener más de 50 caracteres.")
+    @Size(max = 80, message = "El nombre no puede tener más de 50 caracteres.")
     private String nombre;
     @NotNull(message = "El apellido no puede ser nulo.")
     @NotBlank(message = "El apellido no puede estar vacío.")
-    @Size(max = 50, message = "El apellido no puede tener más de 50 caracteres.")
+    @Size(max = 80, message = "El apellido no puede tener más de 50 caracteres.")
     private String apellido;
     @NotNull(message = "El correo electrónico no puede ser nulo.")
     @NotBlank(message = "El correo electrónico no puede estar vacío.")
