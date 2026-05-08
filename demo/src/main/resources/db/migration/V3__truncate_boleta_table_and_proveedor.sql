@@ -4,7 +4,8 @@ INSERT INTO cliente_beneficio_bd.beneficio (nombre, descuento) VALUES
 ('Fonasa', 8),
 ('Colmena', 15),
 ('Vida tres', 10),
-('Nueva mas vida', 12);
+('Nueva mas vida', 12),
+('Sin afiliacion', 0);
 
 
 INSERT INTO cliente_beneficio_bd.cliente (run, dv, nombre, apellido, correo, telefono, id_beneficio) VALUES
