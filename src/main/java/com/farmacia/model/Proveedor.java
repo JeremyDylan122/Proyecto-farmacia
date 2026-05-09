@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class Proveedor {
 
     @Id
+    @Column(name = "rut_proveedor")
     private String rutProveedor;
 
     @Column(nullable = false)
