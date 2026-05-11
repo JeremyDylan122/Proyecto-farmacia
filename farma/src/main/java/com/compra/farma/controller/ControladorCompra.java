@@ -1,46 +1,47 @@
 package com.compra.farma.controller;
 
 import com.compra.farma.dto.DtoCompra;
-import com.compra.farma.model.ModeloCompra;
 import com.compra.farma.service.ServicioCompra;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 @RestController
 @RequestMapping("/api/compras")
-@RequiredArgsConstructor
 public class ControladorCompra {
 
     private final ServicioCompra servicioCompra;
 
+    public ControladorCompra(ServicioCompra servicioCompra) {
+        this.servicioCompra = servicioCompra;
+    }
+    @PostMapping
+    public ResponseEntity<DtoCompra> crear(@Valid @RequestBody DtoCompra dto){
+        DtoCompra compraCreada = servicioCompra.crear(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(compraCreada);
+    }
+    
     @GetMapping
-    public List<ModeloCompra> listar(){
-        return servicioCompra.obtenerCompras();
+    public ResponseEntity<List<DtoCompra>> listar(){
+        return ResponseEntity.ok(servicioCompra.listaCompras());
     }
 
     @GetMapping("/{id}")
-    public ModeloCompra obtenerPorId(@PathVariable Long id){
-        return servicioCompra.buscarPorId(id);
-    }
-
-    @PostMapping
-    public ResponseEntity<ModeloCompra> crearCompra(@Valid @RequestBody DtoCompra dto){
-        ModeloCompra compraCreada = servicioCompra.crearCompra(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(compraCreada);
-    }
+    public ResponseEntity<DtoCompra> obtenerPorId(@PathVariable Long idOrdenCompra){
+            return ResponseEntity.ok(servicioCompra.buscarPorId(idOrdenCompra));
+        }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity <void> eliminarCompra(@PathVariable Long Id){
-        servicioCompra.eliminarCompra(Id);
+    public ResponseEntity <Void> eliminarCompra(@PathVariable Long idOrdenCompra){
+        servicioCompra.eliminarCompra(idOrdenCompra);
         return ResponseEntity.noContent().build();
     }
+
 }
 
