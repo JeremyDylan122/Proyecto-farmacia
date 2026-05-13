@@ -1,13 +1,13 @@
 package com.boleta.gestionboleta.client;
 
-import org.springframework.stereotype.Component;
-
 import com.boleta.gestionboleta.client.dto.ClienteRemotoDTO;
 import com.boleta.gestionboleta.client.feign.ClienteBeneficioFeignClient;
 import com.boleta.gestionboleta.excepcions.IntegracionExternaException;
 import com.boleta.gestionboleta.excepcions.RecursoNoEncontradoException;
 
 import feign.FeignException;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class ClienteBeneficioClient {

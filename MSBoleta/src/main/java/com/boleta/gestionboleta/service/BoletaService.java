@@ -15,11 +15,11 @@ import com.boleta.gestionboleta.client.ClienteBeneficioClient;
 import com.boleta.gestionboleta.client.InventarioClient;
 import com.boleta.gestionboleta.client.dto.ClienteRemotoDTO;
 import com.boleta.gestionboleta.client.dto.ProductoRemotoDTO;
-import com.boleta.gestionboleta.dto.ActualizarBoletaProductosDTO;
-import com.boleta.gestionboleta.dto.BoletaDTO;
-import com.boleta.gestionboleta.dto.BoletaDTOMapper;
+import com.boleta.gestionboleta.dto.ActualizarBoletaProductosRequestDTO;
 import com.boleta.gestionboleta.dto.BoletaProductoRequestDTO;
-import com.boleta.gestionboleta.dto.CrearBoletaDTO;
+import com.boleta.gestionboleta.dto.BoletaResponseDTO;
+import com.boleta.gestionboleta.dto.BoletaResponseDTOMapper;
+import com.boleta.gestionboleta.dto.CrearBoletaRequestDTO;
 import com.boleta.gestionboleta.excepcions.RecursoNoEncontradoException;
 import com.boleta.gestionboleta.excepcions.RecursoNuloException;
 import com.boleta.gestionboleta.excepcions.ReglaNegocioException;
@@ -42,18 +42,18 @@ public class BoletaService {
 
     private final BoletaRepository boletaRepository;
     private final RecetaClienteRepository recetaClienteRepository;
-    private final BoletaDTOMapper boletaDTOMapper;
+    private final BoletaResponseDTOMapper boletaResponseDTOMapper;
     private final ClienteBeneficioClient clienteBeneficioClient;
     private final InventarioClient inventarioClient;
 
-    public BoletaDTO crearBoleta(CrearBoletaDTO crearBoletaDTO) {
-        if (crearBoletaDTO == null) {
+    public BoletaResponseDTO crearBoleta(CrearBoletaRequestDTO crearBoletaRequestDTO) {
+        if (crearBoletaRequestDTO == null) {
             throw new RecursoNuloException("La boleta no puede ser nula.");
         }
 
         ResultadoCalculoBoleta resultado = calcularBoleta(
-                crearBoletaDTO.getRunCliente(),
-                crearBoletaDTO.getProductos());
+                crearBoletaRequestDTO.getRunCliente(),
+                crearBoletaRequestDTO.getProductos());
 
         Boleta boleta = new Boleta();
         boleta.setFolio(generarSiguienteFolio());
@@ -62,29 +62,29 @@ public class BoletaService {
         aplicarResultado(boleta, resultado);
 
         Boleta boletaGuardada = boletaRepository.save(boleta);
-        return boletaDTOMapper.toDTO(boletaGuardada);
+        return boletaResponseDTOMapper.toDTO(boletaGuardada);
     }
 
-    public BoletaDTO buscarPorId(Long id) {
-        return boletaDTOMapper.toDTO(obtenerBoletaPorId(id));
+    public BoletaResponseDTO buscarPorId(Long id) {
+        return boletaResponseDTOMapper.toDTO(obtenerBoletaPorId(id));
     }
 
-    public List<BoletaDTO> listarPorRunCliente(String runCliente) {
+    public List<BoletaResponseDTO> listarPorRunCliente(String runCliente) {
         return boletaRepository.findByClienteRunOrderByFechaEmisionDesc(runCliente)
                 .stream()
-                .map(boletaDTOMapper::toDTO)
+                .map(boletaResponseDTOMapper::toDTO)
                 .toList();
     }
 
-    public List<BoletaDTO> listarPorSkuProducto(Long skuProducto) {
+    public List<BoletaResponseDTO> listarPorSkuProducto(Long skuProducto) {
         return boletaRepository.findBySkuProducto(skuProducto)
                 .stream()
-                .map(boletaDTOMapper::toDTO)
+                .map(boletaResponseDTOMapper::toDTO)
                 .toList();
     }
 
-    public BoletaDTO actualizarProductos(Long id, ActualizarBoletaProductosDTO actualizarBoletaProductosDTO) {
-        if (actualizarBoletaProductosDTO == null) {
+    public BoletaResponseDTO actualizarProductos(Long id, ActualizarBoletaProductosRequestDTO actualizarBoletaProductosRequestDTO) {
+        if (actualizarBoletaProductosRequestDTO == null) {
             throw new RecursoNuloException("La actualizacion de productos no puede ser nula.");
         }
 
@@ -95,11 +95,11 @@ public class BoletaService {
 
         ResultadoCalculoBoleta resultado = calcularBoleta(
                 boleta.getCliente().getRun(),
-                actualizarBoletaProductosDTO.getProductos());
+                actualizarBoletaProductosRequestDTO.getProductos());
 
         aplicarResultado(boleta, resultado);
         Boleta boletaActualizada = boletaRepository.save(boleta);
-        return boletaDTOMapper.toDTO(boletaActualizada);
+        return boletaResponseDTOMapper.toDTO(boletaActualizada);
     }
 
     public void anularBoleta(Long id) {

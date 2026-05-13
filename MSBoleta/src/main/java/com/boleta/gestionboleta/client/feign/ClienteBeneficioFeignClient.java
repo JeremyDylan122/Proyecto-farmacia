@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.boleta.gestionboleta.client.dto.ClienteRemotoDTO;
 
-@FeignClient(name = "clienteBeneficioFeignClient", url = "${clientebeneficio.api.base-url}")
+@FeignClient(name = "clienteBeneficioFeignClient", url = "http://localhost:8083")
 public interface ClienteBeneficioFeignClient {
 
     @GetMapping("/api/clientes/{run}")

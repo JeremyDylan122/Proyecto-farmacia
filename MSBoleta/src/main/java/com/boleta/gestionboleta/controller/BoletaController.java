@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.boleta.gestionboleta.dto.ActualizarBoletaProductosDTO;
-import com.boleta.gestionboleta.dto.BoletaDTO;
-import com.boleta.gestionboleta.dto.CrearBoletaDTO;
+import com.boleta.gestionboleta.dto.ActualizarBoletaProductosRequestDTO;
+import com.boleta.gestionboleta.dto.BoletaResponseDTO;
+import com.boleta.gestionboleta.dto.CrearBoletaRequestDTO;
 import com.boleta.gestionboleta.service.BoletaService;
 
 import jakarta.validation.Valid;
@@ -28,31 +28,31 @@ public class BoletaController {
     private final BoletaService boletaService;
 
     @PostMapping
-    public ResponseEntity<BoletaDTO> crearBoleta(@Valid @RequestBody CrearBoletaDTO crearBoletaDTO) {
-        BoletaDTO boletaDTO = boletaService.crearBoleta(crearBoletaDTO);
-        return ResponseEntity.status(201).body(boletaDTO);
+    public ResponseEntity<BoletaResponseDTO> crearBoleta(@Valid @RequestBody CrearBoletaRequestDTO crearBoletaRequestDTO) {
+        BoletaResponseDTO boletaResponseDTO = boletaService.crearBoleta(crearBoletaRequestDTO);
+        return ResponseEntity.status(201).body(boletaResponseDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BoletaDTO> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<BoletaResponseDTO> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(boletaService.buscarPorId(id));
     }
 
     @GetMapping("/cliente/{run}")
-    public ResponseEntity<List<BoletaDTO>> listarPorRunCliente(@PathVariable String run) {
+    public ResponseEntity<List<BoletaResponseDTO>> listarPorRunCliente(@PathVariable String run) {
         return ResponseEntity.ok(boletaService.listarPorRunCliente(run));
     }
 
     @GetMapping("/producto/{sku}")
-    public ResponseEntity<List<BoletaDTO>> listarPorSkuProducto(@PathVariable Long sku) {
+    public ResponseEntity<List<BoletaResponseDTO>> listarPorSkuProducto(@PathVariable Long sku) {
         return ResponseEntity.ok(boletaService.listarPorSkuProducto(sku));
     }
 
     @PutMapping("/{id}/productos")
-    public ResponseEntity<BoletaDTO> actualizarProductos(
+    public ResponseEntity<BoletaResponseDTO> actualizarProductos(
             @PathVariable Long id,
-            @Valid @RequestBody ActualizarBoletaProductosDTO actualizarBoletaProductosDTO) {
-        return ResponseEntity.ok(boletaService.actualizarProductos(id, actualizarBoletaProductosDTO));
+            @Valid @RequestBody ActualizarBoletaProductosRequestDTO actualizarBoletaProductosRequestDTO) {
+        return ResponseEntity.ok(boletaService.actualizarProductos(id, actualizarBoletaProductosRequestDTO));
     }
 
     @PatchMapping("/{id}/anular")

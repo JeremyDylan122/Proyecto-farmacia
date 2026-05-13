@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.boleta.gestionboleta.dto.RecetaClienteDTO;
 import com.boleta.gestionboleta.dto.RecetaClienteRequestDTO;
+import com.boleta.gestionboleta.dto.RecetaClienteResponseDTO;
 import com.boleta.gestionboleta.service.RecetaClienteService;
 
 import jakarta.validation.Valid;
@@ -26,18 +26,19 @@ public class RecetaClienteController {
     private final RecetaClienteService recetaClienteService;
 
     @PostMapping
-    public ResponseEntity<RecetaClienteDTO> registrarReceta(@Valid @RequestBody RecetaClienteRequestDTO recetaClienteRequestDTO) {
-        RecetaClienteDTO recetaClienteDTO = recetaClienteService.registrarReceta(recetaClienteRequestDTO);
-        return ResponseEntity.status(201).body(recetaClienteDTO);
+    public ResponseEntity<RecetaClienteResponseDTO> registrarReceta(
+            @Valid @RequestBody RecetaClienteRequestDTO recetaClienteRequestDTO) {
+        RecetaClienteResponseDTO recetaClienteResponseDTO = recetaClienteService.registrarReceta(recetaClienteRequestDTO);
+        return ResponseEntity.status(201).body(recetaClienteResponseDTO);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RecetaClienteDTO> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<RecetaClienteResponseDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(recetaClienteService.obtenerPorId(id));
     }
 
     @GetMapping("/cliente/{run}")
-    public ResponseEntity<List<RecetaClienteDTO>> listarPorRunCliente(@PathVariable String run) {
+    public ResponseEntity<List<RecetaClienteResponseDTO>> listarPorRunCliente(@PathVariable String run) {
         return ResponseEntity.ok(recetaClienteService.listarPorRunCliente(run));
     }
 

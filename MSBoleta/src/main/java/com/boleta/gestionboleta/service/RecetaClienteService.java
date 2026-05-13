@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.boleta.gestionboleta.dto.RecetaClienteDTO;
-import com.boleta.gestionboleta.dto.RecetaClienteDTOMapper;
 import com.boleta.gestionboleta.dto.RecetaClienteRequestDTO;
+import com.boleta.gestionboleta.dto.RecetaClienteResponseDTO;
+import com.boleta.gestionboleta.dto.RecetaClienteResponseDTOMapper;
 import com.boleta.gestionboleta.excepcions.RecursoDuplicadoException;
 import com.boleta.gestionboleta.excepcions.RecursoNoEncontradoException;
 import com.boleta.gestionboleta.excepcions.RecursoNuloException;
@@ -23,9 +23,9 @@ import lombok.RequiredArgsConstructor;
 public class RecetaClienteService {
 
     private final RecetaClienteRepository recetaClienteRepository;
-    private final RecetaClienteDTOMapper recetaClienteDTOMapper;
+    private final RecetaClienteResponseDTOMapper recetaClienteResponseDTOMapper;
 
-    public RecetaClienteDTO registrarReceta(RecetaClienteRequestDTO recetaClienteRequestDTO) {
+    public RecetaClienteResponseDTO registrarReceta(RecetaClienteRequestDTO recetaClienteRequestDTO) {
         if (recetaClienteRequestDTO == null) {
             throw new RecursoNuloException("La receta del cliente no puede ser nula.");
         }
@@ -51,18 +51,18 @@ public class RecetaClienteService {
         recetaCliente.setActiva(true);
 
         RecetaCliente recetaGuardada = recetaClienteRepository.save(recetaCliente);
-        return recetaClienteDTOMapper.toDTO(recetaGuardada);
+        return recetaClienteResponseDTOMapper.toDTO(recetaGuardada);
     }
 
-    public List<RecetaClienteDTO> listarPorRunCliente(String runCliente) {
+    public List<RecetaClienteResponseDTO> listarPorRunCliente(String runCliente) {
         return recetaClienteRepository.findByRunClienteOrderByFechaEmisionDesc(runCliente)
                 .stream()
-                .map(recetaClienteDTOMapper::toDTO)
+                .map(recetaClienteResponseDTOMapper::toDTO)
                 .toList();
     }
 
-    public RecetaClienteDTO obtenerPorId(Long id) {
-        return recetaClienteDTOMapper.toDTO(buscarEntidadPorId(id));
+    public RecetaClienteResponseDTO obtenerPorId(Long id) {
+        return recetaClienteResponseDTOMapper.toDTO(buscarEntidadPorId(id));
     }
 
     public void desactivarReceta(Long id) {

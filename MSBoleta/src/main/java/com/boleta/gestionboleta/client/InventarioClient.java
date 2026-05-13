@@ -1,13 +1,13 @@
 package com.boleta.gestionboleta.client;
 
-import org.springframework.stereotype.Component;
-
 import com.boleta.gestionboleta.client.dto.ProductoRemotoDTO;
 import com.boleta.gestionboleta.client.feign.InventarioFeignClient;
 import com.boleta.gestionboleta.excepcions.IntegracionExternaException;
 import com.boleta.gestionboleta.excepcions.RecursoNoEncontradoException;
 
 import feign.FeignException;
+
+import org.springframework.stereotype.Component;
 
 @Component
 public class InventarioClient {
