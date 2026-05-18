@@ -12,8 +12,8 @@ import java.util.Map;
 @RestControllerAdvice
 public class ManejadorGlobalException {
 
-    @ExceptionHandler(CompraNoEncotradaException.class)
-    public ResponseEntity<Map<String, String>> manejarCompraNoEncontrada(CompraNoEncotradaException ex) {
+    @ExceptionHandler(CompraNoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> manejarCompraNoEncontrada(CompraNoEncontradaException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("error", ex.getMessage());
         return  new ResponseEntity<>(error, HttpStatus.NOT_FOUND);

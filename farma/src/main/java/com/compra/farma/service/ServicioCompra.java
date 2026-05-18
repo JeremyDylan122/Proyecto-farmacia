@@ -1,6 +1,6 @@
 package com.compra.farma.service;
 
-import com.compra.farma.exception.CompraNoEncotradaException;
+import com.compra.farma.exception.CompraNoEncontradaException;
 import org.springframework.stereotype.Service;
 import com.compra.farma.dto.DtoCompra;
 import com.compra.farma.dto.CompraMapper;
@@ -33,17 +33,17 @@ public class ServicioCompra {
                     .collect(Collectors.toList());
     }
 
-    public DtoCompra buscarPorId(Long idOrdenCompra){
-        return repo.findById(idOrdenCompra)
+    public DtoCompra buscarPorId(Long id){
+        return repo.findById(id)
                     .map(mapper::toDTO)
-                    .orElseThrow(()-> new CompraNoEncotradaException(idOrdenCompra));
+                    .orElseThrow(()-> new CompraNoEncontradaException("Compra no encontrada: " + id));
     }
 
-    public void eliminarCompra(Long idOrdenCompra){
-        if(!repo.existsById(idOrdenCompra)){
-            throw new CompraNoEncotradaException(idOrdenCompra);
+    public void eliminarCompra(Long id){
+        if(!repo.existsById(id)){
+            throw new CompraNoEncontradaException("Compra no encontrada: " + id);
         }
-        repo.deleteById(idOrdenCompra);
+        repo.deleteById(id);
     }
 
 }
