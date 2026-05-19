@@ -12,17 +12,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table (name = "proveedores")
+@Table (schema = "bd_proveedor", name = "proveedores")
 public class Proveedor {
 
     @Id
-    @Column(name = "rut_proveedor")
+    @Column(name = "rut_proveedor", unique = true)
     private String rutProveedor;
 
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String direccion;
 
     @Column(nullable = false)
