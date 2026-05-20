@@ -1,12 +1,13 @@
-package com.farmacia.repository;
+package com.farmacia.proy.repository;
 
 import org.springframework.stereotype.Repository;
+
+import com.farmacia.proy.model.Proveedor;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.farmacia.model.Proveedor;
 
 @Repository
 public interface RepositorioProveedor extends JpaRepository<Proveedor, String> { 

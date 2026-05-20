@@ -1,4 +1,4 @@
-package com.farmacia.dto;
+package com.farmacia.proy.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

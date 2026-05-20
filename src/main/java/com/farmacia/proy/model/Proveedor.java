@@ -1,4 +1,4 @@
-package com.farmacia.model;
+package com.farmacia.proy.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table (schema = "bd_proveedor", name = "proveedores")
+@Table (name = "proveedores", schema = "public")
 public class Proveedor {
 
     @Id

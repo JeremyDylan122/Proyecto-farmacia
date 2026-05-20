@@ -1,4 +1,4 @@
-package com.farmacia.Exceptions;
+package com.farmacia.proy.Exceptions;
 
 public class ProveedorNotFoundException extends RuntimeException {
 

@@ -1,4 +1,4 @@
-package com.farmacia.Exceptions;
+package com.farmacia.proy.Exceptions;
 
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;

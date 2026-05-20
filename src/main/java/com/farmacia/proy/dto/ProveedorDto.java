@@ -1,4 +1,4 @@
-package com.farmacia.dto;
+package com.farmacia.proy.dto;
 
 import jakarta.validation.constraints.*;
 

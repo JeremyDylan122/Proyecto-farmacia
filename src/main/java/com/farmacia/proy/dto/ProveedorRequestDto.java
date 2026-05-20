@@ -1,7 +1,5 @@
-package com.farmacia.dto;
+package com.farmacia.proy.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -9,7 +7,7 @@ import lombok.Data;
 public class ProveedorRequestDto {
 
     @NotBlank(message = "El rut del proveedor es obligatorio")
-    @Pattern(regexp = "^\\d{9}|\\d{12}$", message = "El rut debe tener 9 o 12 dígitos")
+    @Pattern(regexp = "^\\d{1,2}\\.?\\d{3}\\.?\\d{3}-[\\dkk]$", message = "El rut debe tener formato 12345678-9 o 12.345.678-k")
     private String rutProveedor;
 
     @NotBlank(message = "El nombre del proveedor es obligatorio")
@@ -17,7 +15,7 @@ public class ProveedorRequestDto {
     private String nombre;
 
     @NotBlank(message = "El telefono del proveedor es obligatoria")
-    @Pattern(regexp = "^\\d{9}|\\d{12}$", message = "El teléfono debe tener 9 o 12 dígitos")
+    @Pattern(regexp = "^\\d{9}$|^\\d{12}$", message = "El teléfono debe tener 9 o 12 dígitos")
     private String telefono;
 
     private String direccion;

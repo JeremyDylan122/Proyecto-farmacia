@@ -1,8 +1,9 @@
-package com.farmacia.controller;
+package com.farmacia.proy.controller;
 
-import com.farmacia.dto.ProveedorRequestDto;
-import com.farmacia.dto.ProveedorResponseDto;
-import com.farmacia.service.ServicioProveedor;
+import com.farmacia.proy.dto.ProveedorRequestDto;
+import com.farmacia.proy.dto.ProveedorResponseDto;
+import com.farmacia.proy.service.ServicioProveedor;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import java.util.List;

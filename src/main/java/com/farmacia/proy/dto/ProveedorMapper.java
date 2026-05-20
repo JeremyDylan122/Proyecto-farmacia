@@ -1,6 +1,6 @@
-package com.farmacia.dto;
+package com.farmacia.proy.dto;
 
-import com.farmacia.model.Proveedor;
+import com.farmacia.proy.model.Proveedor;
 
 public class ProveedorMapper {
 

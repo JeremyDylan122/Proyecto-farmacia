@@ -1,11 +1,12 @@
-package com.farmacia.service;
+package com.farmacia.proy.service;
 
-import com.farmacia.Exceptions.ProveedorNotFoundException;
-import com.farmacia.dto.ProveedorMapper;
-import com.farmacia.dto.ProveedorRequestDto;
-import com.farmacia.dto.ProveedorResponseDto;
-import com.farmacia.model.Proveedor;
-import com.farmacia.repository.RepositorioProveedor;
+import com.farmacia.proy.Exceptions.ProveedorNotFoundException;
+import com.farmacia.proy.dto.ProveedorMapper;
+import com.farmacia.proy.dto.ProveedorRequestDto;
+import com.farmacia.proy.dto.ProveedorResponseDto;
+import com.farmacia.proy.model.Proveedor;
+import com.farmacia.proy.repository.RepositorioProveedor;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
