@@ -31,7 +31,7 @@ public class ClienteController {
     @PostMapping()
     public ResponseEntity<ClienteDTO> crearCliente(@Valid @RequestBody ClienteDTO clienteDTO) {
         ClienteDTO clienteCreado = clienteService.crearCliente(clienteDTO);
-        return ResponseEntity.created(null).body(clienteCreado);
+        return ResponseEntity.status(201).body(clienteCreado);
     }
 
     @PutMapping("/{run}")
@@ -40,7 +40,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{run}/{dv}")
-    public ResponseEntity<Boolean> eliminarCliente(@PathVariable String run, @PathVariable String dv) {
+    public ResponseEntity<Void> eliminarCliente(@PathVariable String run, @PathVariable String dv) {
         clienteService.eliminarCliente(run, dv);
         return ResponseEntity.noContent().build();
     }

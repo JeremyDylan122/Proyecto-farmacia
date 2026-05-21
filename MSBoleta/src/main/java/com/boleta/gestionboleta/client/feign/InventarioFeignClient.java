@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.boleta.gestionboleta.client.dto.ProductoRemotoDTO;
 
-@FeignClient(name = "inventarioFeignClient", url = "http://localhost:8082")
+@FeignClient(name = "inventarioFeignClient", url = "${inventario.api.base-url}")
 public interface InventarioFeignClient {
 
     @GetMapping("/api/productos/{sku}")

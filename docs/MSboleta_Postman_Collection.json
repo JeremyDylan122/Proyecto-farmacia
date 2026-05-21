@@ -1,0 +1,462 @@
+{
+  "info": {
+    "_postman_id": "a988d8b1-4f18-47e2-8994-e889a71676f4",
+    "name": "MSboleta - API Collection",
+    "description": "Colección de Postman para probar el microservicio de gestión de boletas (MSboleta). Incluye pruebas de integración automatizadas y propagación dinámica de variables (ID de boleta y ID de receta).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Boletas",
+      "item": [
+        {
+          "name": "Crear Boleta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"La boleta tiene ID, Folio y montos correctos\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.be.a('number');",
+                  "    pm.expect(jsonData.folio).to.be.a('number');",
+                  "    pm.expect(jsonData.montoBruto).to.be.a('number');",
+                  "    pm.expect(jsonData.iva).to.be.a('number');",
+                  "    pm.expect(jsonData.montoNeto).to.be.a('number');",
+                  "    pm.expect(jsonData.montoDescuento).to.be.a('number');",
+                  "    pm.expect(jsonData.porcentajeDescuento).to.be.a('number');",
+                  "    pm.expect(jsonData.anulada).to.eql(false);",
+                  "    pm.expect(jsonData.productos).to.be.an('array').and.not.empty;",
+                  "    ",
+                  "    // Guardar variables de entorno de forma dinámica para encadenar las siguientes peticiones",
+                  "    pm.environment.set(\"boleta_id\", jsonData.id);",
+                  "    pm.environment.set(\"boleta_folio\", jsonData.folio);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"runCliente\": \"12345678\",\n  \"productos\": [\n    {\n      \"sku\": 780004,\n      \"cantidad\": 1\n    },\n    {\n      \"sku\": 780017,\n      \"cantidad\": 2\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/boletas",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "boletas"
+              ]
+            },
+            "description": "Crea una nueva boleta para el cliente con su RUN, validando precios y tipos de recetas en msGestionInventario y el descuento del beneficio en msClienteBeneficio."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Boleta por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"La boleta devuelta coincide con el ID solicitado\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var expectedId = parseInt(pm.environment.get(\"boleta_id\"));",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/boletas/{{boleta_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "boletas",
+                "{{boleta_id}}"
+              ]
+            },
+            "description": "Busca y devuelve el detalle completo de una boleta por su ID único."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Boletas por RUN de Cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna una lista de boletas asociadas al cliente\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    if(jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0].cliente.run).to.eql(\"12345678\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/boletas/cliente/12345678",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "boletas",
+                "cliente",
+                "12345678"
+              ]
+            },
+            "description": "Obtiene la lista histórica de boletas emitidas para un cliente específico ordenadas descendentemente por su fecha de emisión."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Boletas por SKU de Producto",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna la lista de boletas que contienen el producto SKU\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/boletas/producto/780004",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "boletas",
+                "producto",
+                "780004"
+              ]
+            },
+            "description": "Obtiene la lista de boletas donde se haya comprado el SKU del producto consultado."
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Productos de Boleta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Se actualizó correctamente la lista de productos y los montos\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var expectedId = parseInt(pm.environment.get(\"boleta_id\"));",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);",
+                  "    pm.expect(jsonData.productos).to.be.an('array');",
+                  "    pm.expect(jsonData.productos[0].skuProducto).to.eql(780004);",
+                  "    pm.expect(jsonData.productos[0].cantidad).to.eql(3);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productos\": [\n    {\n      \"sku\": 780004,\n      \"cantidad\": 3\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/boletas/{{boleta_id}}/productos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "boletas",
+                "{{boleta_id}}",
+                "productos"
+              ]
+            },
+            "description": "Modifica la lista de productos facturados en una boleta existente y recalcula todos los montos de IVA, neto, descuento y bruto."
+          },
+          "response": []
+        },
+        {
+          "name": "Anular Boleta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/boletas/{{boleta_id}}/anular",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "boletas",
+                "{{boleta_id}}",
+                "anular"
+              ]
+            },
+            "description": "Marca una boleta como anulada en el sistema de manera definitiva y guarda la fecha y hora de la anulación."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Recetas Clientes",
+      "item": [
+        {
+          "name": "Registrar Receta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 201 Created\", function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "pm.test(\"La receta se registró correctamente\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.id).to.be.a('number');",
+                  "    pm.expect(jsonData.runCliente).to.eql(\"12345678\");",
+                  "    pm.expect(jsonData.tipoReceta).to.eql(\"receta retenida\");",
+                  "    pm.expect(jsonData.folioReceta).to.eql(\"REC-998877\");",
+                  "    pm.expect(jsonData.activa).to.eql(true);",
+                  "    ",
+                  "    // Guardar variable de entorno de la receta para las consultas siguientes",
+                  "    pm.environment.set(\"receta_id\", jsonData.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"runCliente\": \"12345678\",\n  \"tipoReceta\": \"receta retenida\",\n  \"folioReceta\": \"REC-998877\",\n  \"fechaEmision\": \"2026-05-20\",\n  \"fechaVencimiento\": \"2026-06-20\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/recetas-clientes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "recetas-clientes"
+              ]
+            },
+            "description": "Registra una nueva receta médica para un cliente, validando que las fechas sean coherentes y no sea para un tipo de receta de 'venta libre'."
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener Receta por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"La receta devuelta corresponde al ID consultado\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    var expectedId = parseInt(pm.environment.get(\"receta_id\"));",
+                  "    pm.expect(jsonData.id).to.eql(expectedId);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/recetas-clientes/{{receta_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "recetas-clientes",
+                "{{receta_id}}"
+              ]
+            },
+            "description": "Obtiene el detalle completo de una receta de cliente específica por su ID."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Recetas por RUN de Cliente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 200 OK\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Retorna la lista de recetas asociadas al RUN\", function () {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "    if(jsonData.length > 0) {",
+                  "        pm.expect(jsonData[0].runCliente).to.eql(\"12345678\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/recetas-clientes/cliente/12345678",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "recetas-clientes",
+                "cliente",
+                "12345678"
+              ]
+            },
+            "description": "Lista todas las recetas (tanto vigentes como vencidas/desactivadas) asociadas a un RUN de cliente."
+          },
+          "response": []
+        },
+        {
+          "name": "Desactivar Receta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code es 204 No Content\", function () {",
+                  "    pm.response.to.have.status(204);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/recetas-clientes/{{receta_id}}/desactivar",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "recetas-clientes",
+                "{{receta_id}}",
+                "desactivar"
+              ]
+            },
+            "description": "Desactiva una receta vigente antes de su fecha de vencimiento."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8084",
+      "type": "string"
+    }
+  ]
+}

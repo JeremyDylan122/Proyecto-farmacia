@@ -10,7 +10,7 @@ public interface ClienteRepository  extends JpaRepository<Cliente, String>{
 
     Cliente findByRun(String run);
 
-    void deleteByRun(String run, String dv);
+    void deleteByRunAndDv(String run, String dv);
 
     boolean existsByRun(String run);
 
