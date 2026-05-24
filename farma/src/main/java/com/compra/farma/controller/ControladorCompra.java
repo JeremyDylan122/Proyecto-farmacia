@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-
 @RestController
 @RequestMapping("/api/compras")
 public class ControladorCompra {
@@ -32,12 +31,12 @@ public class ControladorCompra {
         return ResponseEntity.ok(servicioCompra.listaCompras());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{idOrdenCompra}")
     public ResponseEntity<DtoCompra> obtenerPorId(@PathVariable Long idOrdenCompra){
             return ResponseEntity.ok(servicioCompra.buscarPorId(idOrdenCompra));
         }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{idOrdenCompra}")
     public ResponseEntity <Void> eliminarCompra(@PathVariable Long idOrdenCompra){
         servicioCompra.eliminarCompra(idOrdenCompra);
         return ResponseEntity.noContent().build();

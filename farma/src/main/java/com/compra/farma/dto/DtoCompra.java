@@ -1,7 +1,7 @@
 package com.compra.farma.dto;
 
 import java.math.BigDecimal;
-import com.compra.farma.dto.DtoFactura;
+import java.sql.Date;
 
 import jakarta.validation.constraints.*;
 
@@ -20,14 +20,23 @@ public record DtoCompra(
 
     @NotNull(message = "La cantidad es obligatoria")
     @Min(value = 1, message = "La cantidad minima es 1")
-    Integer cantidad,
+    Long cantidad,
 
     @NotNull(message = "El total de compra es obligatoria")
     @PositiveOrZero(message = "El total de compra debe ser mayor o igual a 0")
     @Digits(integer = 10, fraction = 2, message = "El total de la compra no tiene un formato valido")
     BigDecimal totalCompra,
 
-    DtoFactura factura
+    @NotNull(message = "El código del lote es obligatorio")
+    Long codigoLote,
+
+    @NotNull(message = "La fecha de vencimiento es obligatoria")
+    @Future(message = "La fecha de vencimiento debe ser una fecha futura")
+    Date fechaVencimiento,
+
+    DtoFactura factura,
+
+    Object proveedor
 
 ){}
 

@@ -2,7 +2,7 @@ package com.compra.farma.dto;
 
 import com.compra.farma.model.ModeloCompra;
 import com.compra.farma.model.ModeloFactura;
-
+import java.util.ArrayList;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,6 +18,13 @@ public class CompraMapper {
         entity.setSku(dto.sku());
         entity.setCantidad(dto.cantidad());
         entity.setTotalCompra(dto.totalCompra());
+        entity.setCodigoLote(dto.codigoLote());
+        entity.setFechaVencimiento(dto.fechaVencimiento());
+
+    
+        if (entity.getDetalles() == null) {
+            entity.setDetalles(new ArrayList<>());
+        }
 
         if(dto.factura() != null) {
             ModeloFactura facturaEntity = new ModeloFactura();
@@ -28,6 +35,10 @@ public class CompraMapper {
             facturaEntity.setNombreCliente(dto.factura().getNombreCliente());
             facturaEntity.setTotalFactura(dto.factura().getTotalFactura());
             entity.setFactura(facturaEntity);
+            
+            if (facturaEntity.getDetalles() == null) {
+                facturaEntity.setDetalles(new ArrayList<>());
+            }
         }
         return entity;
     }
@@ -48,14 +59,17 @@ public class CompraMapper {
                 null
             );
         }
+        
         return new DtoCompra(
             entity.getIdOrdenCompra(),
             entity.getRutProveedor(),
             entity.getSku(),
             entity.getCantidad(),
             entity.getTotalCompra(),
-            facturaDto
+            entity.getCodigoLote(),
+            entity.getFechaVencimiento() != null ? new java.sql.Date(entity.getFechaVencimiento().getTime()) : null,
+            facturaDto,
+            null 
         );
     }
 }
-

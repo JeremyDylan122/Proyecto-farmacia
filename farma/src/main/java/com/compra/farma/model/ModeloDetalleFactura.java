@@ -1,17 +1,12 @@
 package com.compra.farma.model;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.validation.constraints.*;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "detalle_factura", schema = "public")
+@Table(name = "detalle_factura")
 
 public class ModeloDetalleFactura {
 
@@ -30,17 +25,37 @@ public class ModeloDetalleFactura {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idFactura", nullable = false)
-    @JsonIgnore
+    @JsonBackReference
     private ModeloFactura factura;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idOrdenCompra", nullable = false)
+    @JsonBackReference
     private ModeloCompra compra;
+    
+    @NotNull(message = "El código del lote es obligatorio")
+    @Column(nullable = false)
+    private Long codigoLote;
 
+    @NotNull(message = "La cantidad es obligatoria")
+    @Min(value = 1, message = "La cantidad minima debe ser al menos 1")
+    @Column(nullable = false)
     private Integer cantidad;
 
+    @NotNull(message = "La fecha de vencimiento es obligatoria")
+    @Future(message = "La fecha de vencimiento debe ser una fecha futura")
+    @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
+    private Date fechaVencimiento;
+
+    @NotNull(message = "El precio unitario es obligatorio")
+    @PositiveOrZero(message = "El precio unitario debe ser mayor o igual a cero")
+    @Column(nullable = false)
     private BigDecimal precioUnitario;
 
+    @NotNull(message = "El subtotal es obligatorio")
+    @PositiveOrZero(message = "El subtotal debe ser mayor o igual a cero")
+    @Column(nullable = false, precision = 10, scale = 2 )
     private BigDecimal subTotal;
 
 }

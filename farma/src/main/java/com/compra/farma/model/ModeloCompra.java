@@ -1,6 +1,11 @@
 package com.compra.farma.model;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -12,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "compras", schema = "compras")
+@Table(name = "compra")
 
 public class ModeloCompra {
 
@@ -33,7 +38,17 @@ public class ModeloCompra {
     @NotNull(message = "la cantidad es obligatoria")
     @Min(value = 1, message = "La cantidad minima de compra dbee ser al menos 1")
     @Column(nullable = false)
-    private Integer cantidad;
+    private Long cantidad;
+
+    @NotNull(message = "El código del lote es obligatorio") 
+    @Column(nullable = false)
+    private Long codigoLote;
+    
+    @NotNull(message = "La fecha de vencimiento es obligatoria")  
+    @Future(message = "La fecha de vencimiento debe ser una fecha futura")
+    @Temporal(TemporalType.DATE)
+    @Column(nullable = false)     
+    private Date fechaVencimiento;
 
     @NotNull(message = "El total de compra es obligatorio")
     @PositiveOrZero(message = "El total debe ser mayor o igual a cero")
@@ -44,5 +59,9 @@ public class ModeloCompra {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_factura")
     private ModeloFactura factura;
+
+    @OneToMany(mappedBy = "compra", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ModeloDetalleFactura> detalles;
 
 }
