@@ -1,6 +1,5 @@
-CREATE SCHEMA IF NOT EXISTS bd_proveedor;
 
-CREATE TABLE IF NOT EXISTS bd_proveedor.proveedores (
+CREATE TABLE proveedor (
     rut_proveedor VARCHAR(15) PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL,
     direccion VARCHAR(100) NULL,
