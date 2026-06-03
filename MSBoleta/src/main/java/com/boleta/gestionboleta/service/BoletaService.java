@@ -162,6 +162,14 @@ public class BoletaService {
         BigDecimal subtotal = BigDecimal.ZERO;
 
         for (Map.Entry<Long, Integer> entry : consolidarProductos(productosRequestDTO).entrySet()) {
+            if (entry.getValue() > 10) {
+                log.warn("Se intento agregar una cantidad consolidada mayor a 10 para el SKU {}: cantidad={}", entry.getKey(), entry.getValue());
+                throw new ReglaNegocioException("La cantidad consolidada para el SKU " + entry.getKey() + " no puede ser mayor a 10 unidades.");
+            }
+            if (entry.getValue() <= 0) {
+                log.warn("Se intento agregar una cantidad consolidada menor o igual a 0 para el SKU {}: cantidad={}", entry.getKey(), entry.getValue());
+                throw new ReglaNegocioException("La cantidad consolidada para el SKU " + entry.getKey() + " debe ser mayor a 0.");
+            }
             ProductoRemotoDTO productoRemotoDTO = inventarioClient.obtenerProductoPorSku(entry.getKey());
             validarProductoFacturable(productoRemotoDTO);
             validarReceta(clienteSnapshot.getRun(), productoRemotoDTO.getTipoReceta());

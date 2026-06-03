@@ -1,5 +1,6 @@
 package com.boleta.gestionboleta.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -56,6 +57,14 @@ public class RecetaClienteService {
                     recetaClienteRequestDTO.getFechaEmision(),
                     recetaClienteRequestDTO.getFechaVencimiento());
             throw new ReglaNegocioException("La fecha de vencimiento no puede ser anterior a la fecha de emision.");
+        }
+        if (recetaClienteRequestDTO.getFechaEmision() != null
+                && recetaClienteRequestDTO.getFechaEmision().isAfter(LocalDate.now())) {
+            log.warn("Receta con fecha de emision futura. runCliente={}, folio={}, fechaEmision={}",
+                    recetaClienteRequestDTO.getRunCliente(),
+                    recetaClienteRequestDTO.getFolioReceta(),
+                    recetaClienteRequestDTO.getFechaEmision());
+            throw new ReglaNegocioException("La fecha de emision de la receta no puede ser una fecha futura (dias, meses o años despues).");
         }
 
         RecetaCliente recetaGuardada = recetaClienteRepository.save(crearRecetaCliente(recetaClienteRequestDTO));
