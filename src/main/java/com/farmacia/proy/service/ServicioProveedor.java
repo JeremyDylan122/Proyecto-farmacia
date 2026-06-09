@@ -68,4 +68,19 @@ public class ServicioProveedor {
             return false;
         }
     }
+
+    public Object enviarCompraACompras(Object dtoCompra) {
+        WebClient webClient = webClientBuilder.baseUrl(farmaUrl).build();
+        try {
+            return webClient.post()
+                    .uri("/api/compras") 
+                    .bodyValue(dtoCompra) 
+                    .retrieve()
+                    .bodyToMono(Object.class)
+                    .block();
+        } catch (Exception e) {
+            System.err.println("Error al conectar con el endpoint de compras: " + e.getMessage());
+            throw new RuntimeException("No se pudo registrar la compra en el otro microservicio.");
+        }
+    }
 }
