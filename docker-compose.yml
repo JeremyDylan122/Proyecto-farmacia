@@ -1,0 +1,58 @@
+services:
+
+  eureka:
+    build: ./eureka
+    image: eureka:latest
+    container_name: eureka
+    ports:
+      - "8761:8761"
+
+  apigateway:
+    build: ./apigateway
+    image: apigateway:latest
+    container_name: apigateway
+    ports:
+      - "8088:8088"
+    depends_on:
+      - eureka
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+
+  MSBoleta:
+    build: ./MSBoleta
+    image: msboleta:latest
+    container_name: MSBoleta
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka
+    environment:
+      - DB_URL=jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require
+      - DB_USERNAME=postgres.uqxsjrztlkdtqeurpdun
+      - DB_PASSWORD=ClienteBeneficio
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - CLIENTEBENEFICIO_API_BASE_URL=http://MSclienteBeneficio:8083
+
+  MSclienteBeneficio:
+    build: ./MSclienteBeneficio
+    image: msclientebeneficio:latest
+    container_name: MSclienteBeneficio
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka
+    environment:
+      - DB_URL=jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require
+      - DB_USERNAME=postgres.uqxsjrztlkdtqeurpdun
+      - DB_PASSWORD=ClienteBeneficio
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+
+networks:
+  default:
+    name: microservicios-network

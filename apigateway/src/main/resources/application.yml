@@ -1,0 +1,22 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      routes:
+        - id: MSBoleta
+          uri: lb://MSBOLETA
+          predicates:
+            - Path=/api/boletas/**, /api/recetas-clientes/**
+        - id: MSclienteBeneficio
+          uri: lb://MSCLIENTEBENEFICIO
+          predicates:
+            - Path=/api/beneficios/**, /api/clientes/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
