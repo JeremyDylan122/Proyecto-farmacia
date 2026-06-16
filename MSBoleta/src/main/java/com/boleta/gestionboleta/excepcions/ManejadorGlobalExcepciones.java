@@ -103,6 +103,22 @@ public class ManejadorGlobalExcepciones {
                 .body(new ErrorDTO(HttpStatus.BAD_REQUEST.value(), mensaje));
     }
 
+    @ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+    public ResponseEntity<ErrorDTO> handleNoResourceFound(org.springframework.web.servlet.resource.NoResourceFoundException e) {
+        log.warn("Recurso estatico o endpoint no encontrado: {}", e.getMessage());
+        String mensaje = "El recurso solicitado no fue encontrado. Verifique que la URL y el ID ingresados sean correctos.";
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorDTO(HttpStatus.NOT_FOUND.value(), mensaje));
+    }
+
+    @ExceptionHandler(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorDTO> handleMethodArgumentTypeMismatch(org.springframework.web.method.annotation.MethodArgumentTypeMismatchException e) {
+        log.warn("Tipo de argumento de metodo no coincide: {}", e.getMessage());
+        String mensaje = "El valor '" + e.getValue() + "' es invalido para el parametro '" + e.getName() + "'. Se esperaba un tipo " + e.getRequiredType().getSimpleName() + ".";
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDTO(HttpStatus.BAD_REQUEST.value(), mensaje));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDTO> handleExcepcionGeneral(Exception e) {
         log.error("Error inesperado no controlado.", e);

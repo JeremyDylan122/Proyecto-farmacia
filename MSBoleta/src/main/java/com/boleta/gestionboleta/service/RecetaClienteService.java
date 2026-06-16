@@ -12,6 +12,7 @@ import com.boleta.gestionboleta.excepcions.RecursoNoEncontradoException;
 import com.boleta.gestionboleta.excepcions.RecursoNuloException;
 import com.boleta.gestionboleta.excepcions.ReglaNegocioException;
 import com.boleta.gestionboleta.model.RecetaCliente;
+import com.boleta.gestionboleta.client.ClienteBeneficioClient;
 import com.boleta.gestionboleta.repository.RecetaClienteRepository;
 
 import jakarta.transaction.Transactional;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RecetaClienteService {
 
     private final RecetaClienteRepository recetaClienteRepository;
+    private final ClienteBeneficioClient clienteBeneficioClient;
 
     public RecetaClienteResponseDTO registrarReceta(RecetaClienteRequestDTO recetaClienteRequestDTO) {
         if (recetaClienteRequestDTO == null) {
@@ -35,6 +37,10 @@ public class RecetaClienteService {
                 recetaClienteRequestDTO.getRunCliente(),
                 recetaClienteRequestDTO.getTipoReceta(),
                 recetaClienteRequestDTO.getFolioReceta());
+        
+        // Validar que el cliente exista en MSclienteBeneficio antes de continuar
+        clienteBeneficioClient.obtenerClientePorRun(recetaClienteRequestDTO.getRunCliente());
+
         if (recetaClienteRepository.existsByRunClienteAndFolioReceta(
                 recetaClienteRequestDTO.getRunCliente(),
                 recetaClienteRequestDTO.getFolioReceta())) {
@@ -49,23 +55,40 @@ public class RecetaClienteService {
                     recetaClienteRequestDTO.getFolioReceta());
             throw new ReglaNegocioException("No es necesario registrar recetas para productos de venta libre.");
         }
-        if (recetaClienteRequestDTO.getFechaVencimiento() != null
-                && recetaClienteRequestDTO.getFechaVencimiento().isBefore(recetaClienteRequestDTO.getFechaEmision())) {
-            log.warn("Receta con fechas invalidas. runCliente={}, folio={}, fechaEmision={}, fechaVencimiento={}",
-                    recetaClienteRequestDTO.getRunCliente(),
-                    recetaClienteRequestDTO.getFolioReceta(),
-                    recetaClienteRequestDTO.getFechaEmision(),
-                    recetaClienteRequestDTO.getFechaVencimiento());
-            throw new ReglaNegocioException("La fecha de vencimiento no puede ser anterior a la fecha de emision.");
+        if (recetaClienteRequestDTO.getFechaEmision() != null) {
+            if (recetaClienteRequestDTO.getFechaEmision().isBefore(LocalDate.now().minusDays(1))) {
+                log.warn("Receta con fecha de emision anterior al dia en curso. runCliente={}, fechaEmision={}",
+                        recetaClienteRequestDTO.getRunCliente(), recetaClienteRequestDTO.getFechaEmision());
+                throw new ReglaNegocioException("La fecha de emision de la receta no puede ser anterior a la fecha del dia en curso.");
+            }
+            if (recetaClienteRequestDTO.getFechaEmision().isAfter(LocalDate.now().plusDays(1))) {
+                log.warn("Receta con fecha de emision futura. runCliente={}, fechaEmision={}",
+                        recetaClienteRequestDTO.getRunCliente(), recetaClienteRequestDTO.getFechaEmision());
+                throw new ReglaNegocioException("La fecha de emision de la receta no puede ser una fecha futura (dias, meses o anos despues).");
+            }
         }
-        if (recetaClienteRequestDTO.getFechaEmision() != null
-                && recetaClienteRequestDTO.getFechaEmision().isAfter(LocalDate.now())) {
-            log.warn("Receta con fecha de emision futura. runCliente={}, folio={}, fechaEmision={}",
-                    recetaClienteRequestDTO.getRunCliente(),
-                    recetaClienteRequestDTO.getFolioReceta(),
-                    recetaClienteRequestDTO.getFechaEmision());
-            throw new ReglaNegocioException("La fecha de emision de la receta no puede ser una fecha futura (dias, meses o años despues).");
+        if (recetaClienteRequestDTO.getFechaVencimiento() != null) {
+            if (recetaClienteRequestDTO.getFechaVencimiento().isBefore(LocalDate.now().minusDays(1))) {
+                log.warn("Receta con fecha de vencimiento anterior a la fecha actual. runCliente={}, fechaVencimiento={}",
+                        recetaClienteRequestDTO.getRunCliente(), recetaClienteRequestDTO.getFechaVencimiento());
+                throw new ReglaNegocioException("La fecha de vencimiento de la receta no puede ser anterior a la fecha actual.");
+            }
+            
+            LocalDate minVencimiento = recetaClienteRequestDTO.getFechaEmision().plusMonths(1);
+            LocalDate maxVencimiento = recetaClienteRequestDTO.getFechaEmision().plusYears(1);
+            
+            if (recetaClienteRequestDTO.getFechaVencimiento().isBefore(minVencimiento)) {
+                log.warn("Receta con fecha de vencimiento menor a un mes de emision. runCliente={}, fechaEmision={}, fechaVencimiento={}",
+                        recetaClienteRequestDTO.getRunCliente(), recetaClienteRequestDTO.getFechaEmision(), recetaClienteRequestDTO.getFechaVencimiento());
+                throw new ReglaNegocioException("La fecha de vencimiento debe ser de al menos un mes a partir de la fecha de emision.");
+            }
+            if (recetaClienteRequestDTO.getFechaVencimiento().isAfter(maxVencimiento)) {
+                log.warn("Receta con fecha de vencimiento mayor a un ano de emision. runCliente={}, fechaEmision={}, fechaVencimiento={}",
+                        recetaClienteRequestDTO.getRunCliente(), recetaClienteRequestDTO.getFechaEmision(), recetaClienteRequestDTO.getFechaVencimiento());
+                throw new ReglaNegocioException("La fecha de vencimiento no puede superar un ano a partir de la fecha de emision.");
+            }
         }
+
 
         RecetaCliente recetaGuardada = recetaClienteRepository.save(crearRecetaCliente(recetaClienteRequestDTO));
         log.info("Receta registrada exitosamente. id={}, runCliente={}, folio={}",
@@ -74,8 +97,16 @@ public class RecetaClienteService {
     }
 
     public List<RecetaClienteResponseDTO> listarPorRunCliente(String runCliente) {
-        return recetaClienteRepository.findByRunClienteOrderByFechaEmisionDesc(runCliente)
-                .stream()
+        // 1. Validar que el cliente exista en MSclienteBeneficio
+        clienteBeneficioClient.obtenerClientePorRun(runCliente);
+        
+        // 2. Obtener las recetas
+        List<RecetaCliente> recetas = recetaClienteRepository.findByRunClienteOrderByFechaEmisionDesc(runCliente);
+        if (recetas.isEmpty()) {
+            throw new RecursoNoEncontradoException("No se encontraron recetas medicas registradas para el cliente con RUN: " + runCliente);
+        }
+        
+        return recetas.stream()
                 .map(RecetaClienteResponseDTO::from)
                 .toList();
     }

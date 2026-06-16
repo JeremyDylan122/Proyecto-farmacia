@@ -6,15 +6,17 @@ spring:
     name: gateway
   cloud:
     gateway:
-      routes:
-        - id: MSBoleta
-          uri: lb://MSBOLETA
-          predicates:
-            - Path=/api/boletas/**, /api/recetas-clientes/**
-        - id: MSclienteBeneficio
-          uri: lb://MSCLIENTEBENEFICIO
-          predicates:
-            - Path=/api/beneficios/**, /api/clientes/**
+      server:
+        webflux:
+          routes:
+            - id: MSBoleta
+              uri: lb://MSBOLETA
+              predicates:
+                - Path=/api/boletas/**, /api/recetas-clientes/**
+            - id: MSclienteBeneficio
+              uri: lb://MSCLIENTEBENEFICIO
+              predicates:
+                - Path=/api/beneficios/**, /api/clientes/**
 
 eureka:
   client:

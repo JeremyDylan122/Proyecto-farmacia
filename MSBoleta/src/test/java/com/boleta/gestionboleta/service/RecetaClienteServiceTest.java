@@ -27,6 +27,7 @@ import com.boleta.gestionboleta.excepcions.RecursoNoEncontradoException;
 import com.boleta.gestionboleta.excepcions.RecursoNuloException;
 import com.boleta.gestionboleta.excepcions.ReglaNegocioException;
 import com.boleta.gestionboleta.model.RecetaCliente;
+import com.boleta.gestionboleta.client.ClienteBeneficioClient;
 import com.boleta.gestionboleta.repository.RecetaClienteRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +35,9 @@ public class RecetaClienteServiceTest {
 
     @Mock
     private RecetaClienteRepository recetaClienteRepository;
+
+    @Mock
+    private ClienteBeneficioClient clienteBeneficioClient;
 
     @InjectMocks
     private RecetaClienteService recetaClienteService;
@@ -46,7 +50,7 @@ public class RecetaClienteServiceTest {
         request.setTipoReceta("Retenida");
         request.setFolioReceta("F123");
         request.setFechaEmision(LocalDate.now());
-        request.setFechaVencimiento(LocalDate.now().plusDays(30));
+        request.setFechaVencimiento(LocalDate.now().plusMonths(1));
 
         when(recetaClienteRepository.existsByRunClienteAndFolioReceta("12345678", "F123")).thenReturn(false);
         
@@ -210,5 +214,32 @@ public class RecetaClienteServiceTest {
         // Then
         assertFalse(receta.isActiva());
         verify(recetaClienteRepository).save(receta);
+    }
+
+    @Test
+    public void listarPorRunCliente_ConRunSinRecetas_DeberiaLanzarRecursoNoEncontradoException() {
+        // Given
+        String run = "12345678";
+        when(recetaClienteRepository.findByRunClienteOrderByFechaEmisionDesc(run))
+                .thenReturn(Collections.emptyList());
+
+        // When & Then
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            recetaClienteService.listarPorRunCliente(run);
+        });
+    }
+
+    @Test
+    public void listarPorRunCliente_ConRunInexistente_DeberiaLanzarRecursoNoEncontradoException() {
+        // Given
+        String run = "87654321";
+        when(clienteBeneficioClient.obtenerClientePorRun(run))
+                .thenThrow(new RecursoNoEncontradoException("Cliente no encontrado con RUN: " + run));
+
+        // When & Then
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            recetaClienteService.listarPorRunCliente(run);
+        });
+        verify(recetaClienteRepository, never()).findByRunClienteOrderByFechaEmisionDesc(any(String.class));
     }
 }
