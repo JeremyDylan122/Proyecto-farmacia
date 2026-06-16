@@ -47,6 +47,7 @@ public class ServicioFacturaTest {
     void setUp() {
         modeloFactura = new ModeloFactura();
         modeloCompra = new ModeloCompra();
+        dtoFactura = mock(DtoFactura.class);
     }
 
     @Test
@@ -54,7 +55,6 @@ public class ServicioFacturaTest {
         DtoDetalle detDto = mock(DtoDetalle.class);
         when(detDto.getIdOrdenCompra()).thenReturn(1L);
         
-        dtoFactura = mock(DtoFactura.class);
         when(dtoFactura.getDetalles()).thenReturn(List.of(detDto));
 
         ModeloDetalleFactura detalleEntity = new ModeloDetalleFactura();
@@ -77,7 +77,6 @@ public class ServicioFacturaTest {
         DtoDetalle detDto = mock(DtoDetalle.class);
         when(detDto.getIdOrdenCompra()).thenReturn(99L);
         
-        dtoFactura = mock(DtoFactura.class);
         when(dtoFactura.getDetalles()).thenReturn(List.of(detDto));
 
         when(facturaMapper.toEntity(any(DtoFactura.class))).thenReturn(modeloFactura);
@@ -91,6 +90,18 @@ public class ServicioFacturaTest {
 
         verify(facturaRepo, never()).save(any(ModeloFactura.class));
     }
+
+    @Test
+    void cuandoListarTodos_entoncesRetornaListaFacturas() {
+        // Simulamos que la base de datos devuelve una lista con una factura
+        when(facturaRepo.findAll()).thenReturn(List.of(modeloFactura));
+        when(facturaMapper.toDTO(any(ModeloFactura.class))).thenReturn(dtoFactura);
+
+        List<DtoFactura> resultado = servicioFactura.listarFacturas();
+
+        assertNotNull(resultado);
+        assertFalse(resultado.isEmpty());
+        assertEquals(1, resultado.size());
+        verify(facturaRepo, times(1)).findAll();
+    }
 }
-
-

@@ -3,6 +3,7 @@ package com.compra.farma.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -112,5 +113,74 @@ public class ServicioCompraTest {
 
         assertNotNull(resultado);
         verify(webClientBuilder, times(1)).build();
+    }
+
+    // ==========================================
+    // ESCENARIOS AGREGADOS PARA COBERTURA AL 100%
+    // ==========================================
+
+    @Test
+    void cuandoListaCompras_entoncesRetornaListaDeCompras() {
+        List<ModeloCompra> listaFalsa = List.of(modeloCompra);
+        when(repo.findAll()).thenReturn(listaFalsa);
+        when(mapper.toDTO(modeloCompra)).thenReturn(dtoCompra);
+
+        List<DtoCompra> resultado = servicioCompra.listaCompras();
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+    }
+
+    @Test
+    void cuandoBuscarPorIdYProveedorFalla_entoncesRetornaMensajeDeErrorTemporal() {
+        Long compraId = 1L;
+        String rutFalso = "12345678-9";
+        modeloCompra.setRutProveedor(rutFalso);
+        
+        when(dtoCompra.rutProveedor()).thenReturn(rutFalso);
+        when(repo.findById(compraId)).thenReturn(Optional.of(modeloCompra));
+        when(mapper.toDTO(modeloCompra)).thenReturn(dtoCompra);
+        
+        when(proveedorClient.obtenerProveedorPorRut(rutFalso)).thenThrow(new RuntimeException("Error de conexión"));
+
+        DtoCompra resultado = servicioCompra.buscarPorId(compraId);
+
+        assertNotNull(resultado);
+        assertEquals("Información del proveedor no disponible temporalmente.", resultado.proveedor());
+    }
+
+    @Test
+    void cuandoEliminarCompraExistente_entoncesEliminaCorrectamente() {
+        Long compraId = 1L;
+        when(repo.existsById(compraId)).thenReturn(true);
+        doNothing().when(repo).deleteById(compraId);
+
+        assertDoesNotThrow(() -> servicioCompra.eliminarCompra(compraId));
+        verify(repo, times(1)).deleteById(compraId);
+    }
+
+    @Test
+    void cuandoEnviarDatosALoteFalla_entoncesLanzaRuntimeException() {
+        Object datosEnviar = new Object();
+
+        WebClient webClientMock = mock(WebClient.class);
+        WebClient.RequestBodyUriSpec requestBodyUriSpecMock = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec requestBodySpecMock = mock(WebClient.RequestBodySpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+
+        doReturn(webClientBuilder).when(webClientBuilder).baseUrl(any());
+        doReturn(webClientMock).when(webClientBuilder).build();
+        doReturn(requestBodyUriSpecMock).when(webClientMock).post();
+        doReturn(requestBodySpecMock).when(requestBodyUriSpecMock).uri(anyString());
+        doReturn(requestBodySpecMock).when(requestBodySpecMock).bodyValue(any());
+        doReturn(responseSpecMock).when(requestBodySpecMock).retrieve();
+        
+        when(responseSpecMock.bodyToMono(Object.class)).thenReturn(Mono.error(new RuntimeException("Timeout")));
+
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            servicioCompra.enviarDatosALote(datosEnviar);
+        });
+
+        assertTrue(ex.getMessage().contains("No se pudo registrar el lote"));
     }
 }
