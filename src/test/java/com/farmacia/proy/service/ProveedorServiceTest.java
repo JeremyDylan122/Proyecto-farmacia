@@ -17,7 +17,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ProveedorServiceTest {
@@ -81,6 +83,33 @@ public class ProveedorServiceTest {
     }
 
     @Test
+    void crearProveedor_EmailYaExiste_DebeLanzarException() {
+        ProveedorRequestDto requestDto = new ProveedorRequestDto();
+        requestDto.setRutProveedor("12345678-9");
+        requestDto.setEmail("duplicado@correo.com");
+        
+        when(repositorio.existsById("12345678-9")).thenReturn(false);
+        when(repositorio.existsByEmail("duplicado@correo.com")).thenReturn(true);
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            servicio.crearProveedor(requestDto);
+        });
+
+        assertEquals("Ya existe proveedor con este email: duplicado@correo.com", exception.getMessage());
+    }
+
+    @Test
+    void obtenerProveedores_DebeRetornarLista() {
+        Proveedor proveedorFalso = new Proveedor();
+        proveedorFalso.setRutProveedor("11111111-1");
+        when(repositorio.findAll()).thenReturn(List.of(proveedorFalso));
+
+        List<ProveedorResponseDto> resultado = servicio.obtenerProveedores();
+        assertNotNull(resultado);
+        assertFalse(resultado.isEmpty());
+    }
+
+    @Test
     void buscarPorRut_CuandoExiste_DebeRetornarProveedor() {
         Proveedor proveedorFalso = new Proveedor();
         proveedorFalso.setRutProveedor("11111111-1");
@@ -120,5 +149,66 @@ public class ProveedorServiceTest {
             servicio.eliminarProveedor("99999999-9");
         });
         verify(repositorio, never()).deleteById(anyString());
+    }
+
+    @Test
+    void verificarMedicamentoEnFarma_CuandoEsExitoso_DebeRetornarTrue() {
+        WebClient webClientMock = mock(WebClient.class);
+        WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.RequestHeadersSpec requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+
+        when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClientMock);
+        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.uri(anyString())).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(Boolean.class)).thenReturn(Mono.just(true));
+
+        boolean resultado = servicio.verificarMedicamentoEnFarma(1L);
+        assertTrue(resultado);
+    }
+
+    @Test
+    void verificarMedicamentoEnFarma_CuandoFallaWebClient_DebeRetornarFalse() {
+        WebClient webClientMock = mock(WebClient.class);
+        when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClientMock);
+        when(webClientMock.get()).thenThrow(new RuntimeException("Error de conexión"));
+
+        boolean resultado = servicio.verificarMedicamentoEnFarma(1L);
+        assertFalse(resultado);
+    }
+
+    @Test
+    void enviarCompraACompras_CuandoEsExitoso_DebeRetornarObjeto() {
+        WebClient webClientMock = mock(WebClient.class);
+        WebClient.RequestBodyUriSpec requestBodyUriSpecMock = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec requestBodySpecMock = mock(WebClient.RequestBodySpec.class);
+        WebClient.RequestHeadersSpec requestHeadersSpecMock = mock(WebClient.RequestHeadersSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+
+        when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClientMock);
+        when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
+        when(requestBodyUriSpecMock.uri(anyString())).thenReturn(requestBodySpecMock);
+        when(requestBodySpecMock.bodyValue(any())).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(Object.class)).thenReturn(Mono.just(new Object()));
+
+        Object resultado = servicio.enviarCompraACompras(new Object());
+        assertNotNull(resultado);
+    }
+
+    @Test
+    void enviarCompraACompras_CuandoFallaWebClient_DebeLanzarException() {
+        WebClient webClientMock = mock(WebClient.class);
+        when(webClientBuilder.baseUrl(any())).thenReturn(webClientBuilder);
+        when(webClientBuilder.build()).thenReturn(webClientMock);
+        when(webClientMock.post()).thenThrow(new RuntimeException("Error de conexión"));
+
+        assertThrows(RuntimeException.class, () -> {
+            servicio.enviarCompraACompras(new Object());
+        });
     }
 }
