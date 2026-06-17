@@ -17,6 +17,14 @@ spring:
               uri: lb://MSCLIENTEBENEFICIO
               predicates:
                 - Path=/api/beneficios/**, /api/clientes/**
+            - id: ms-catalogo
+              uri: lb://MS-CATALGO
+              predicates:
+                - Path=/api/v1/productos/**
+            - id: ms-inventario
+              uri: lb://MS-INVENTARIO      
+              predicates:
+                - Path=/api/v1/inventario/**, /api/v1/lotes/**, /api/v1/movimientos/**, /api/v1/stock/**
 
 eureka:
   client:
