@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: ms-compraProveedor
+  
+  datasource:
+    url: ${BD_URL:jdbc:postgresql://aws-1-us-west-1.pooler.supabase.com:6543/postgres?prepareThreshold=0}
+    username: ${BD_USER:postgres.wdymywqplyxxfxvngweg}
+    password: ${BD_PASSWORD:Cristebyjona}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: false
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: 8086
+
+logging:
+  level:
+    org.springframework.web: INFO
+    org.hibernate.SQL: INFO
+    root: INFO
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_URI:http://localhost:8761/eureka/}
+  instance:
+    prefer-ip-address: true
+
+microservicio:
+  lote:
+    url: http://gestion-lotes:8083/api/lotes
