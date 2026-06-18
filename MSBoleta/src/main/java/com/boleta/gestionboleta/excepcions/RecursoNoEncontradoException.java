@@ -1,8 +1,0 @@
-package com.boleta.gestionboleta.excepcions;
-
-public class RecursoNoEncontradoException extends RuntimeException {
-
-    public RecursoNoEncontradoException(String mensaje) {
-        super(mensaje);
-    }
-}
