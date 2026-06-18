@@ -5,7 +5,7 @@ services:
     image: eureka:latest
     container_name: eureka
     ports:
-      - "8761:8761"
+      "8761:8761"
 
   apigateway:
     build: ./apigateway

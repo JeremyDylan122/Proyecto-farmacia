@@ -2,7 +2,7 @@ server:
   port: 8088
 
 spring:
-  application:
+  application: 
     name: gateway
   cloud:
     gateway:

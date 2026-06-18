@@ -12,7 +12,7 @@ public class ProductoDTO {
     @NotNull(message = "El sku del producto es obligatorio")
     private Long sku;
 
-    @NotBlank(message = "El nombre del producto es obligatorio.")
+    @NotBlank(message = "El nombre de producto es obligatorio.")
     private String nombre;
 
     @NotNull(message = "El precio del producto es obligatorio.")

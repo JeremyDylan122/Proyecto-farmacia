@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-@Schema(description = "Datos para actualizar el listado de productos de una boleta existente")
+@Schema(description = "Datos para actualizar el listado productos de una boleta existente")
 public class ActualizarBoletaProductosRequestDTO {
 
     @Valid

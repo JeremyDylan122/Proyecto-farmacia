@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-@Schema(description = "Información de un beneficio de descuento")
+@Schema(description = "Información beneficio de descuento")
 public class BeneficioDTO {
 
     @NotBlank(message = "El id no puede estar vacío.")

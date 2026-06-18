@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/compras")
 @RequiredArgsConstructor 
-@Tag(name = "Compras", description = "Endpoints para gestionar compras a proveedores")
+@Tag(name = "Compras", description = "Endpoints de gestion compras a proveedores")
 public class ControladorCompra {
 
     private final ServicioCompra servicioCompra;
