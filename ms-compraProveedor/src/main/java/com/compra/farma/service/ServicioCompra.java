@@ -81,7 +81,7 @@ public class ServicioCompra {
         
         try {
             return webClient.post()
-                    .uri("/api/inventario/compras") 
+                    .uri("/api/v1/inventario/compras") 
                     .bodyValue(datosDelLote) 
                     .retrieve()
                     .bodyToMono(Object.class) 

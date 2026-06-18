@@ -35,6 +35,7 @@ services:
       - DB_PASSWORD=ClienteBeneficio
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
       - CLIENTEBENEFICIO_API_BASE_URL=http://MSclienteBeneficio:8083
+      - INVENTARIO_API_BASE_URL=http://ms-catalogo:8081
 
   MSclienteBeneficio:
     build: ./MSclienteBeneficio
@@ -86,6 +87,24 @@ services:
       - DB_USERNAME=postgres.xjjbfnddjhiyfjcdocbp
       - DB_PASSWORD=Fullstack011V
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+
+  ms-compraProveedor:
+    build: ./ms-compraProveedor
+    image: mscompraproveedor:latest
+    container_name: ms-compraProveedor
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8086:8086"
+    depends_on:
+      - eureka
+    environment:
+      - BD_URL=jdbc:postgresql://aws-1-us-west-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
+      - BD_USER=postgres.wdymywqplyxxfxvngweg
+      - BD_PASSWORD=Cristebyjona
+      - EUREKA_URI=http://eureka:8761/eureka/
+      - MICROSERVICIO_LOTE_URL=http://ms-inventario:8082
 
 networks:
   default:
