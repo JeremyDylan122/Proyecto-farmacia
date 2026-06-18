@@ -27,6 +27,10 @@ spring:
           uri: lb://MS-COMPRAPROVEEDOR
           predicates:
             - Path=/api/compras/**
+        - id: ms-proveedor
+          uri: lb://MS-PROVEEDOR
+          predicates:
+            - Path=/api/proveedores/**
 
 eureka:
   client:
