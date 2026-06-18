@@ -13,15 +13,19 @@ public class CompraMapper {
             return null;
         }
         ModeloCompra entity = new ModeloCompra();
-        entity.setIdOrdenCompra(dto.idOrdenCompra());
+        
+        if (dto.idOrdenCompra() != null) {
+            entity.setIdOrdenCompra(dto.idOrdenCompra().toString());
+        }
+        
         entity.setRutProveedor(dto.rutProveedor());
         entity.setSku(dto.sku());
         entity.setCantidad(dto.cantidad());
         entity.setTotalCompra(dto.totalCompra());
         entity.setCodigoLote(dto.codigoLote());
+        
         entity.setFechaVencimiento(dto.fechaVencimiento());
 
-    
         if (entity.getDetalles() == null) {
             entity.setDetalles(new ArrayList<>());
         }
@@ -61,13 +65,13 @@ public class CompraMapper {
         }
         
         return new DtoCompra(
-            entity.getIdOrdenCompra(),
+            entity.getIdOrdenCompra(), 
             entity.getRutProveedor(),
             entity.getSku(),
             entity.getCantidad(),
             entity.getTotalCompra(),
             entity.getCodigoLote(),
-            entity.getFechaVencimiento() != null ? new java.sql.Date(entity.getFechaVencimiento().getTime()) : null,
+            entity.getFechaVencimiento(),
             facturaDto,
             null 
         );

@@ -43,9 +43,9 @@ public class ServicioCompra {
                     .collect(Collectors.toList());
     }
 
-    public DtoCompra buscarPorId(Long id){
-        ModeloCompra compra = repo.findById(id)
-                .orElseThrow(() -> new CompraNoEncontradaException("Compra no encontrada: " + id));
+    public DtoCompra buscarPorId(String idStr){
+        ModeloCompra compra = repo.findById(idStr)
+                .orElseThrow(() -> new CompraNoEncontradaException("Compra no encontrada: " + idStr));
                 
         DtoCompra dtoSinProveedor = mapper.toDTO(compra);
 
@@ -69,11 +69,11 @@ public class ServicioCompra {
         );
     }
 
-    public void eliminarCompra(Long id){
-        if(!repo.existsById(id)){
-            throw new CompraNoEncontradaException("Compra no encontrada: " + id);
+    public void eliminarCompra(String idStr){
+        if(!repo.existsById(idStr)){
+            throw new CompraNoEncontradaException("Compra no encontrada: " + idStr);
         }
-        repo.deleteById(id);
+        repo.deleteById(idStr);
     }
 
     public Object enviarDatosALote(Object datosDelLote) {

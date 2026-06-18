@@ -25,7 +25,7 @@ public class ControladorDetalle {
         description = "Obtiene una lista de detalles asociados a una factura específica utilizando su ID"
     )
     @ApiResponses(value = {
-        // Corregido para mapear correctamente una lista en la documentación de Swagger
+
         @ApiResponse(responseCode = "200", description = "Lista de detalles obtenida exitosamente",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = DtoDetalle.class)))),
         @ApiResponse(responseCode = "404", description = "Factura no encontrada",

@@ -1,14 +1,13 @@
 package com.compra.farma.dto;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.validation.constraints.*;
 
 public record DtoCompra(
 
-    @Positive(message = "El id de orden de compra debe ser positivo")
-    Long idOrdenCompra,
+    String idOrdenCompra,
 
     @NotBlank(message = "El rut del proveedor es obligatorio")
     @Pattern(regexp = "^[0-9]{7,8}-[0-9Kk]$", message = "El RUT del proveedor no tiene un formato válido")
@@ -27,16 +26,14 @@ public record DtoCompra(
     @Digits(integer = 10, fraction = 2, message = "El total de la compra no tiene un formato valido")
     BigDecimal totalCompra,
 
-    @NotNull(message = "El código del lote es obligatorio")
-    Long codigoLote,
+    @NotBlank(message = "El código del lote es obligatorio")
+    String codigoLote,
 
     @NotNull(message = "La fecha de vencimiento es obligatoria")
     @Future(message = "La fecha de vencimiento debe ser una fecha futura")
-    Date fechaVencimiento,
+    LocalDate fechaVencimiento,
 
     DtoFactura factura,
 
     Object proveedor
-
 ){}
-

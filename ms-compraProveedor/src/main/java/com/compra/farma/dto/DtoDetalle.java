@@ -1,7 +1,7 @@
 package com.compra.farma.dto;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate; 
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DtoDetalle {
 
-    private Long idOrdenCompra;
+    private String idOrdenCompra;
 
-    @NotNull(message = "Lacantidad es obligatorio")
+    @NotNull(message = "La cantidad es obligatoria") 
     @Min(value = 1, message = "La cantidad minima es 1")
     private Integer cantidad;
 
@@ -24,8 +24,8 @@ public class DtoDetalle {
     @Digits(integer = 10, fraction = 2, message = "El precio unitario no tiene un formato valido")  
     private BigDecimal precioUnitario;
 
-    private Long codigoLote;
+    private String codigoLote;
 
-    private Date fechaVencimiento;
+    private LocalDate fechaVencimiento;
 
 }

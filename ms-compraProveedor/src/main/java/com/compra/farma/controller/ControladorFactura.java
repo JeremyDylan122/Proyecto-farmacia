@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.responses.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
-import org.springframework.http.HttpStatus; // <- ¡Faltaba esta importación!
+import org.springframework.http.HttpStatus; 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +26,6 @@ public class ControladorFactura {
         description = "Crea una nueva factura con los datos proporcionados"
     )
     @ApiResponses(value = {
-        // Corregido a 201 para coincidir con HttpStatus.CREATED
         @ApiResponse(responseCode = "201", description = "Factura creada exitosamente",
             content = @Content(schema = @Schema(implementation = DtoFactura.class))),
         @ApiResponse(responseCode = "400", description = "Solicitud inválida",
@@ -61,7 +60,7 @@ public class ControladorFactura {
         description = "Obtiene una lista de todas las facturas"
     )
     @ApiResponses(value = {
-        // Corregido para indicar que la respuesta devuelve un Array (Lista) de Dtos
+
         @ApiResponse(responseCode = "200", description = "Lista de facturas obtenida exitosamente",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = DtoFactura.class))))
     })

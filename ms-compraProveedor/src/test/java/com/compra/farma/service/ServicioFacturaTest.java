@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.compra.farma.dto.DetalleMapper;
 import com.compra.farma.dto.DtoDetalle;
-import com.compra.farma.dto.DtoFactura;
+import com.compra.farma.dto.DtoFactura; 
 import com.compra.farma.dto.FacturaMapper;
 import com.compra.farma.exception.CompraNoEncontradaException;
 import com.compra.farma.model.ModeloCompra;
@@ -52,8 +52,9 @@ public class ServicioFacturaTest {
 
     @Test
     void cuandoCrearFacturaOk_entoncesRetornaFacturaGuardada() {
+        String compraId = "compra-uuid-1";
         DtoDetalle detDto = mock(DtoDetalle.class);
-        when(detDto.getIdOrdenCompra()).thenReturn(1L);
+        when(detDto.getIdOrdenCompra()).thenReturn(compraId);
         
         when(dtoFactura.getDetalles()).thenReturn(List.of(detDto));
 
@@ -61,7 +62,8 @@ public class ServicioFacturaTest {
 
         when(facturaMapper.toEntity(any(DtoFactura.class))).thenReturn(modeloFactura);
         when(detalleMapper.toEntity(any(DtoDetalle.class))).thenReturn(detalleEntity);
-        when(compraRepo.findById(1L)).thenReturn(Optional.of(modeloCompra));
+    
+        when(compraRepo.findById(compraId)).thenReturn(Optional.of(modeloCompra));
         when(facturaRepo.save(any(ModeloFactura.class))).thenReturn(modeloFactura);
         when(facturaMapper.toDTO(any(ModeloFactura.class))).thenReturn(dtoFactura);
 
@@ -69,20 +71,21 @@ public class ServicioFacturaTest {
 
         assertNotNull(resultado);
         verify(facturaRepo, times(1)).save(any(ModeloFactura.class));
-        verify(compraRepo, times(1)).findById(1L);
+        verify(compraRepo, times(1)).findById(compraId);
     }
 
     @Test
     void cuandoCrearFacturaConCompraInexistente_entoncesLanzaExcepcion() {
+        String compraIdInexistente = "compra-uuid-99";
         DtoDetalle detDto = mock(DtoDetalle.class);
-        when(detDto.getIdOrdenCompra()).thenReturn(99L);
+        when(detDto.getIdOrdenCompra()).thenReturn(compraIdInexistente);
         
         when(dtoFactura.getDetalles()).thenReturn(List.of(detDto));
 
         when(facturaMapper.toEntity(any(DtoFactura.class))).thenReturn(modeloFactura);
         when(detalleMapper.toEntity(any(DtoDetalle.class))).thenReturn(new ModeloDetalleFactura());
         
-        when(compraRepo.findById(99L)).thenReturn(Optional.empty());
+        when(compraRepo.findById(compraIdInexistente)).thenReturn(Optional.empty());
 
         assertThrows(CompraNoEncontradaException.class, () -> {
             servicioFactura.crearFactura(dtoFactura);
@@ -93,7 +96,6 @@ public class ServicioFacturaTest {
 
     @Test
     void cuandoListarTodos_entoncesRetornaListaFacturas() {
-        // Simulamos que la base de datos devuelve una lista con una factura
         when(facturaRepo.findAll()).thenReturn(List.of(modeloFactura));
         when(facturaMapper.toDTO(any(ModeloFactura.class))).thenReturn(dtoFactura);
 

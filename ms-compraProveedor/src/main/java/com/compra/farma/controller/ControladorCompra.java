@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/compras")
-@RequiredArgsConstructor // <- Reemplaza el constructor manual para mantener consistencia con tus otros controladores
+@RequiredArgsConstructor 
 @Tag(name = "Compras", description = "Endpoints para gestionar compras a proveedores")
 public class ControladorCompra {
 
@@ -42,7 +42,6 @@ public class ControladorCompra {
         summary = "Listar todas las compras",
         description = "Obtiene una lista de todas las compras realizadas a proveedores"
     )
-    // Corregido: Se envuelve en @ApiResponses y se cambia a @ArraySchema por ser una lista
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de compras obtenida exitosamente",
             content = @Content(array = @ArraySchema(schema = @Schema(implementation = DtoCompra.class))))
@@ -64,8 +63,8 @@ public class ControladorCompra {
     })
     @GetMapping("/{idOrdenCompra}")
     public ResponseEntity<DtoCompra> obtenerPorId(
-        @Parameter(description = "ID de la orden de compra a buscar") 
-        @PathVariable Long idOrdenCompra
+        @Parameter(description = "ID de la orden de compra a buscar", schema = @Schema(type = "string")) 
+        @PathVariable String idOrdenCompra
     ) {
         return ResponseEntity.ok(servicioCompra.buscarPorId(idOrdenCompra));
     }
@@ -80,11 +79,10 @@ public class ControladorCompra {
     })
     @DeleteMapping("/{idOrdenCompra}")
     public ResponseEntity<Void> eliminarCompra(
-        @Parameter(description = "ID de la orden de compra a eliminar") 
-        @PathVariable Long idOrdenCompra
+        @Parameter(description = "ID de la orden de compra a eliminar", schema = @Schema(type = "string")) 
+        @PathVariable String idOrdenCompra
     ) {
         servicioCompra.eliminarCompra(idOrdenCompra);
         return ResponseEntity.noContent().build();
     }
 }
-

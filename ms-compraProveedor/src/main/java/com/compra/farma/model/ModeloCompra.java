@@ -1,7 +1,7 @@
 package com.compra.farma.model;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import jakarta.persistence.GenerationType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,12 +17,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "compra")
-
 public class ModeloCompra {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idOrdenCompra;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String idOrdenCompra;
 
     @Pattern(regexp = "^[0-9]{7,8}-[0-9Kk]$", message = "El RUT del proveedor no tiene un formato válido")
     @NotBlank(message = "El Rut del proveedor no debe estar vacio")
@@ -42,13 +40,12 @@ public class ModeloCompra {
 
     @NotNull(message = "El código del lote es obligatorio") 
     @Column(nullable = false)
-    private Long codigoLote;
+    private String codigoLote;
     
     @NotNull(message = "La fecha de vencimiento es obligatoria")  
     @Future(message = "La fecha de vencimiento debe ser una fecha futura")
-    @Temporal(TemporalType.DATE)
     @Column(nullable = false)     
-    private Date fechaVencimiento;
+    private LocalDate fechaVencimiento;
 
     @NotNull(message = "El total de compra es obligatorio")
     @PositiveOrZero(message = "El total debe ser mayor o igual a cero")

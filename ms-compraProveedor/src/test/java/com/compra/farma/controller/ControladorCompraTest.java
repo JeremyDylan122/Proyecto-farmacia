@@ -37,21 +37,19 @@ public class ControladorCompraTest {
         DtoCompra dtoMock = mock(DtoCompra.class);
         when(servicioCompra.crear(any(DtoCompra.class))).thenReturn(dtoMock);
 
-        // Usamos un mapa para estructurar los datos sin usar 'set'
-        // De esta forma, cambiamos el LOTE por un número puro (2026) directamente.
         Map<String, Object> compraMap = Map.of(
-            "idOrdenCompra", 1L,
+            "idOrdenCompra", "compra-uuid-1",
             "rutProveedor", "12345678-9",
             "sku", 100L,
             "cantidad", 5,
             "totalCompra", 15000.0,
-            "codigoLote", 2026L, 
+            "codigoLote", "2026", 
             "fechaVencimiento", "2026-12-31"
         );
 
         mockMvc.perform(post("/api/compras")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(compraMap))) // Convierte el mapa a un JSON perfecto
+                .content(objectMapper.writeValueAsString(compraMap))) 
                 .andExpect(status().isCreated());
     }
 
@@ -66,7 +64,7 @@ public class ControladorCompraTest {
     @Test
     public void obtenerPorId_DebeRetornar200() throws Exception {
         DtoCompra dto = mock(DtoCompra.class);
-        when(servicioCompra.buscarPorId(1L)).thenReturn(dto);
+        when(servicioCompra.buscarPorId("1")).thenReturn(dto);
 
         mockMvc.perform(get("/api/compras/1"))
                 .andExpect(status().isOk());
@@ -74,7 +72,7 @@ public class ControladorCompraTest {
 
     @Test
     public void eliminarCompra_DebeRetornar204() throws Exception {
-        doNothing().when(servicioCompra).eliminarCompra(1L);
+        doNothing().when(servicioCompra).eliminarCompra("1");
 
         mockMvc.perform(delete("/api/compras/1"))
                 .andExpect(status().isNoContent());

@@ -1,6 +1,8 @@
 package com.compra.farma.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -61,7 +63,7 @@ public class ServicioCompraTest {
 
     @Test
     void cuandoBuscarPorIdExistente_entoncesRetornaCompraConProveedor() {
-        Long compraId = 1L;
+        String compraId = "compra-uuid-1";
         String rutFalso = "12345678-9";
         
         modeloCompra.setRutProveedor(rutFalso);
@@ -82,7 +84,7 @@ public class ServicioCompraTest {
 
     @Test
     void cuandoBuscarPorIdInexistente_entoncesLanzaExcepcion() {
-        Long compraId = 99L;
+        String compraId = "compra-uuid-99";
         when(repo.findById(compraId)).thenReturn(Optional.empty());
 
         assertThrows(CompraNoEncontradaException.class, () -> {
@@ -115,10 +117,6 @@ public class ServicioCompraTest {
         verify(webClientBuilder, times(1)).build();
     }
 
-    // ==========================================
-    // ESCENARIOS AGREGADOS PARA COBERTURA AL 100%
-    // ==========================================
-
     @Test
     void cuandoListaCompras_entoncesRetornaListaDeCompras() {
         List<ModeloCompra> listaFalsa = List.of(modeloCompra);
@@ -133,7 +131,7 @@ public class ServicioCompraTest {
 
     @Test
     void cuandoBuscarPorIdYProveedorFalla_entoncesRetornaMensajeDeErrorTemporal() {
-        Long compraId = 1L;
+        String compraId = "compra-uuid-1";
         String rutFalso = "12345678-9";
         modeloCompra.setRutProveedor(rutFalso);
         
@@ -151,7 +149,7 @@ public class ServicioCompraTest {
 
     @Test
     void cuandoEliminarCompraExistente_entoncesEliminaCorrectamente() {
-        Long compraId = 1L;
+        String compraId = "compra-uuid-1";
         when(repo.existsById(compraId)).thenReturn(true);
         doNothing().when(repo).deleteById(compraId);
 

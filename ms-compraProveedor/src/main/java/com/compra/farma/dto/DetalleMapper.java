@@ -7,6 +7,9 @@ import com.compra.farma.model.ModeloDetalleFactura;
 public class DetalleMapper {
 
     public ModeloDetalleFactura toEntity(DtoDetalle dto) {
+        if (dto == null) {
+            return null;
+        }
         ModeloDetalleFactura entity = new ModeloDetalleFactura();
         
         entity.setCantidad(dto.getCantidad());
@@ -16,6 +19,9 @@ public class DetalleMapper {
     }
 
     public DtoDetalle toDTO(ModeloDetalleFactura entity) {
+        if (entity == null) {
+            return null;
+        }
         DtoDetalle dto = new DtoDetalle();
         
         dto.setCantidad(entity.getCantidad());
@@ -26,5 +32,4 @@ public class DetalleMapper {
         }
         return dto;
     }
-
 }
