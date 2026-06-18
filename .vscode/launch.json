@@ -9,6 +9,16 @@
             "projectName": "farma",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-FarmaApplication<ms-compraProveedor>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.compra.farma.FarmaApplication",
+            "projectName": "ms-compraProveedor",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
         }
     ]
 }
