@@ -5,7 +5,7 @@ services:
     image: eureka:latest
     container_name: eureka
     ports:
-      "8761:8761"
+      - "8761:8761"
 
   apigateway:
     build: ./apigateway
@@ -105,6 +105,25 @@ services:
       - BD_PASSWORD=Cristebyjona
       - EUREKA_URI=http://eureka:8761/eureka/
       - MICROSERVICIO_LOTE_URL=http://ms-inventario:8082
+      - PROVEEDOR_API_BASE_URL=http://ms-proveedor:8085/api/proveedores
+
+  ms-proveedor:
+    build: ./ms-Proveedor
+    image: msproveedor:latest
+    container_name: ms-proveedor
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka
+    environment:
+      - DB_URL=jdbc:postgresql://aws-1-us-west-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
+      - DB_USERNAME=postgres.wdymywqplyxxfxvngweg
+      - DB_PASSWORD=Cristebyjona
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+      - MICROSERVICIO_FARMA_URL=http://ms-compraProveedor:8086
 
   ms-Proveedor:
     build: ./ms-proveedor

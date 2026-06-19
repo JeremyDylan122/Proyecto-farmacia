@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient (name = "microservicio-proveedor", url = "http://localhost:8085/api/proveedores")
+@FeignClient(name = "ms-proveedor", url = "${PROVEEDOR_API_BASE_URL:http://localhost:8085/api/proveedores}")
 public interface ProveedorClient {
 
     @GetMapping("/{rut}")
