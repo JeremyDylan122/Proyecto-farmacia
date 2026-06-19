@@ -100,11 +100,29 @@ services:
     depends_on:
       - eureka
     environment:
-      - BD_URL=jdbc:postgresql://aws-1-us-west-1.pooler.supabase.com:6543/postgres?prepareThreshold=0
+      - BD_URL=jdbc:postgresql://aws-1-us-west-1.pooler.supabase.com:5432/postgres?prepareThreshold=0
       - BD_USER=postgres.wdymywqplyxxfxvngweg
       - BD_PASSWORD=Cristebyjona
       - EUREKA_URI=http://eureka:8761/eureka/
       - MICROSERVICIO_LOTE_URL=http://ms-inventario:8082
+
+  ms-Proveedor:
+    build: ./ms-proveedor
+    image: msproveedor:latest
+    container_name: ms-Proveedor
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka
+    environment:
+      - DB_URL=jdbc:postgresql://aws-1-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require
+      - DB_USERNAME=postgres.ilwruhyhcqrzobdoisrc
+      - DB_PASSWORD=Cristebyjona
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka:8761/eureka
+
 
 networks:
   default:
